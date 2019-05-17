@@ -6,6 +6,12 @@ def pytest_addoption(parser):
     parser.addoption("--run-mark", default="all", help="run test cases filter by mark, options: private/public/all")
 
 
+def pytest_configure(config):
+    config.addinivalue_line("markers", "private: mark private testcase")
+    config.addinivalue_line("markers", "public: mark public testcase")
+    config.addinivalue_line("markers", "all: mark all testcase")
+
+
 def pytest_collection_modifyitems(config, items):
     global run_mark
     if config.getoption("--run-mark"):
@@ -18,7 +24,7 @@ def pytest_collection_modifyitems(config, items):
     if run_mark == "all":
         return
     for item in items:
-        case_list = run_test_cases if item.get_marker(run_mark) else skip_test_cases
+        case_list = run_test_cases if item.get_closest_marker(run_mark) else skip_test_cases
         case_list.append(item)
 
     if run_test_cases:

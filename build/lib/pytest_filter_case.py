@@ -18,7 +18,7 @@ def pytest_collection_modifyitems(config, items):
     if run_mark == "all":
         return
     for item in items:
-        case_list = run_test_cases if item.get_marker(run_mark) else skip_test_cases
+        case_list = run_test_cases if item.get_closest_marker(run_mark) else skip_test_cases
         case_list.append(item)
 
     if run_test_cases:
