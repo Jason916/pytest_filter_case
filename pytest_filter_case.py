@@ -18,7 +18,7 @@ def pytest_collection_modifyitems(config, items):
         run_mark = config.getoption("--run-mark")
 
     if run_mark not in ("private", "public", "all"):
-        raise Exception("non support {} mode".format(run_mark))
+        raise RuntimeError("non support {} mode".format(run_mark))
 
     run_test_cases, skip_test_cases = [], []
     if run_mark == "all":
@@ -31,3 +31,5 @@ def pytest_collection_modifyitems(config, items):
         items[:] = run_test_cases
         if skip_test_cases:
             config.hook.pytest_deselected(items=skip_test_cases)
+    else:
+        raise RuntimeError("no testcase is marked by '{}'".format(run_mark))
