@@ -3,12 +3,13 @@ __author__ = 'jasonxu'
 
 
 def pytest_addoption(parser):
-    parser.addoption("--run-mark", default="all", help="run test cases filter by mark, options: private/public/all")
+    parser.addoption("--run-mark", default="all", help="run test cases filter by mark, options: private/public/deployment/all")
 
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "private: mark private testcase")
     config.addinivalue_line("markers", "public: mark public testcase")
+    config.addinivalue_line("markers", "deployment: mark deployment testcase")
     config.addinivalue_line("markers", "all: mark all testcase")
 
 
@@ -17,7 +18,7 @@ def pytest_collection_modifyitems(config, items):
     if config.getoption("--run-mark"):
         run_mark = config.getoption("--run-mark")
 
-    if run_mark not in ("private", "public", "all"):
+    if run_mark not in ("private", "public", "deployment", "all"):
         raise RuntimeError("non support {} mode".format(run_mark))
 
     run_test_cases, skip_test_cases = [], []

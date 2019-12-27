@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='pytest_filter_case',
     url='https://github.com/Jason916/pytest_filter_case',
-    version='1.0.5',
+    version='1.0.6',
     description='run test cases filter by mark',
     author='Jason916',
     author_email='Jason1989Xu@gmail.com',
