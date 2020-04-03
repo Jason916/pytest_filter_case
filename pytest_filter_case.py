@@ -12,10 +12,10 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "public: mark public testcase")
     config.addinivalue_line("markers", "deployment: mark deployment testcase")
     config.addinivalue_line("markers", "all: mark all testcase")
-    config.addinivalue_line("markers", "P0: mark all testcase")
-    config.addinivalue_line("markers", "P1: mark all testcase")
-    config.addinivalue_line("markers", "P2: mark all testcase")
-    config.addinivalue_line("markers", "P3: mark all testcase")
+    config.addinivalue_line("markers", "P0: mark P0 testcase")
+    config.addinivalue_line("markers", "P1: mark P1 testcase")
+    config.addinivalue_line("markers", "P2: mark P2 testcase")
+    config.addinivalue_line("markers", "P3: mark P3 testcase")
 
 
 def pytest_collection_modifyitems(config, items):
