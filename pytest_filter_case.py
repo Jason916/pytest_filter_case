@@ -3,7 +3,8 @@ __author__ = 'jasonxu'
 
 
 def pytest_addoption(parser):
-    parser.addoption("--run-mark", default="all", help="run test cases filter by mark, options: private/public/deployment/all")
+    parser.addoption("--run-mark", default="all",
+                     help="run test cases filter by mark, options: private/public/deployment/all/P0/P1/P2/P3")
 
 
 def pytest_configure(config):
@@ -11,10 +12,14 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "public: mark public testcase")
     config.addinivalue_line("markers", "deployment: mark deployment testcase")
     config.addinivalue_line("markers", "all: mark all testcase")
+    config.addinivalue_line("markers", "P0: mark all testcase")
+    config.addinivalue_line("markers", "P1: mark all testcase")
+    config.addinivalue_line("markers", "P2: mark all testcase")
+    config.addinivalue_line("markers", "P3: mark all testcase")
 
 
 def pytest_collection_modifyitems(config, items):
-    global run_mark
+    run_mark = "all"
     if config.getoption("--run-mark"):
         run_mark = config.getoption("--run-mark")
 
