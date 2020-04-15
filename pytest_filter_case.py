@@ -23,7 +23,7 @@ def pytest_collection_modifyitems(config, items):
     if config.getoption("--run-mark"):
         run_mark = config.getoption("--run-mark")
 
-    if run_mark not in ("private", "public", "deployment", "all"):
+    if run_mark not in ("private", "public", "deployment", "all", "P0", "P1", "P2", "P3"):
         raise RuntimeError("non support {} mode".format(run_mark))
 
     run_test_cases, skip_test_cases = [], []
