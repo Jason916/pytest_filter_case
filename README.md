@@ -8,4 +8,8 @@ pip install pytest-filter-case
 
 ## Usage
 for example:
-  pytest --run-mark public
+  single option
+    pytest --run-mark public
+
+  multi options
+    pytest --run-mark "public P0"
