@@ -3,7 +3,7 @@ __author__ = 'jasonxu'
 
 
 def pytest_addoption(parser):
-    parser.addoption("--run-mark", default="all",
+    parser.addoption("--run-mark", default="public",
                      help="run test cases filter by mark, options: private/public/deployment/all/P0/P1/P2/P3")
 
 
