@@ -3,47 +3,56 @@ __author__ = 'jasonxu'
 
 
 def pytest_addoption(parser):
-    parser.addoption("--run-mark", default="public",
-                     help="run test cases filter by mark, options: private/public/deployment/all/P0/P1/P2/P3")
+    parser.addoption("--run-env", default="public",
+                     help="run testcases filter by mark of env, options: private/public/canary/deployment/all, example: [single] --run-env public")
+    parser.addoption("--run-testcase-level", default="P0",
+                     help="run testcases filter by mark of testcase level, options: P0/P1/P2/P3, example: [single] --run-testcase-level P0,[multi] --run-testcase-level P0 P1 P2")
 
 
 def pytest_configure(config):
-    config.addinivalue_line("markers", "private: mark private testcase")
-    config.addinivalue_line("markers", "public: mark public testcase")
-    config.addinivalue_line("markers", "deployment: mark deployment testcase")
-    config.addinivalue_line("markers", "all: mark all testcase")
-    config.addinivalue_line("markers", "P0: mark P0 testcase")
-    config.addinivalue_line("markers", "P1: mark P1 testcase")
-    config.addinivalue_line("markers", "P2: mark P2 testcase")
-    config.addinivalue_line("markers", "P3: mark P3 testcase")
+    config.addinivalue_line("markers", "private: mark private testcases")
+    config.addinivalue_line("markers", "public: mark public testcases")
+    config.addinivalue_line("markers", "canary: mark canary testcases")
+    config.addinivalue_line("markers", "deployment: mark deployment testcases")
+    config.addinivalue_line("markers", "all: mark all testcases")
+    config.addinivalue_line("markers", "P0: mark P0 testcases")
+    config.addinivalue_line("markers", "P1: mark P1 testcases")
+    config.addinivalue_line("markers", "P2: mark P2 testcases")
+    config.addinivalue_line("markers", "P3: mark P3 testcases")
 
 
 def pytest_collection_modifyitems(config, items):
-    run_mark = "all"
-    if config.getoption("--run-mark"):
-        run_mark = config.getoption("--run-mark")
+    run_env = "public"
+    run_testcase_level = "P0"
+    if config.getoption("--run-env"):
+        run_env = config.getoption("--run-env")
+    if config.getoption("--run-testcase-level"):
+        run_testcase_level = config.getoption("--run-testcase-level")
 
-    run_mark_list = run_mark.split(" ")
-    for run_mark_item in run_mark_list:
-        if run_mark_item not in ("private", "public", "deployment", "all", "P0", "P1", "P2", "P3"):
-            raise RuntimeError("non support {} mode".format(run_mark_item))
+    run_testcase_level_list = run_testcase_level.split(" ")
+    for run_testcase_level_item in run_testcase_level_list:
+        if run_testcase_level_item not in ("P0", "P1", "P2", "P3"):
+            raise RuntimeError("non support testcase level: {}".format(run_testcase_level_item))
+
+    if run_env not in ("private", "public", "deployment", "all", "canary"):
+        raise RuntimeError("non support env level: {}".format(run_env))
 
     run_test_cases, skip_test_cases = [], []
-    if "all" in run_mark:
+    if "all" == run_env:
         return
+
     for item in items:
-        if len(run_mark_list) == 1:
-            condition = item.get_closest_marker(run_mark_list[0])
-        elif len(run_mark_list) == 2:
-            condition = item.get_closest_marker(run_mark_list[0]) and item.get_closest_marker(run_mark_list[1])
+        run_testcase_level_arr = [item.get_closest_marker(x) for x in run_testcase_level_list]
+        condition = item.get_closest_marker(run_env) and (
+            reduce(lambda (condition1, condition2): condition1 or condition2, run_testcase_level_arr))
+        if condition:
+            run_test_cases.append(item)
         else:
-            raise RuntimeError("number of run mark is exceed")
-        case_list = run_test_cases if condition else skip_test_cases
-        case_list.append(item)
+            skip_test_cases.append(item)
 
     if run_test_cases:
         items[:] = run_test_cases
         if skip_test_cases:
             config.hook.pytest_deselected(items=skip_test_cases)
     else:
-        raise RuntimeError("no testcase is marked by '{}'".format(run_mark))
+        raise RuntimeError("no testcase is marked by '{}'".format(run_env))
