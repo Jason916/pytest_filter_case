@@ -59,7 +59,3 @@ def pytest_collection_modifyitems(config, items):
             config.hook.pytest_deselected(items=skip_test_cases)
     else:
         raise RuntimeError("no testcase is marked, please check your --run-env and --run-testcase-level")
-
-
-import sys
-print sys.version_info
