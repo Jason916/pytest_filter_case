@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 __author__ = 'jasonxu'
+import sys
+if sys.version_info.major == 3:
+    from functools import reduce
 
 
 def pytest_addoption(parser):
     parser.addoption("--run-env", default="public",
                      help="run testcases filter by mark of env, options: private/public/canary/deployment/all, example: [single] --run-env public")
-    parser.addoption("--run-testcase-level", default="P0",
+    parser.addoption("--run-testcase-level", default="P0 P1 P2",
                      help="run testcases filter by mark of testcase level, options: P0/P1/P2/P3, example: [single] --run-testcase-level P0,[multi] --run-testcase-level P0 P1 P2")
 
 
@@ -44,7 +47,7 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         run_testcase_level_arr = [item.get_closest_marker(x) for x in run_testcase_level_list]
         condition = item.get_closest_marker(run_env) and (
-            reduce(lambda (condition1, condition2): condition1 or condition2, run_testcase_level_arr))
+            reduce(lambda condition1, condition2: condition1 or condition2, run_testcase_level_arr))
         if condition:
             run_test_cases.append(item)
         else:
@@ -55,4 +58,8 @@ def pytest_collection_modifyitems(config, items):
         if skip_test_cases:
             config.hook.pytest_deselected(items=skip_test_cases)
     else:
-        raise RuntimeError("no testcase is marked by '{}'".format(run_env))
+        raise RuntimeError("no testcase is marked, please check your --run-env and --run-testcase-level")
+
+
+import sys
+print sys.version_info
